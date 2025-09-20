@@ -6,7 +6,14 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    settings_module = 'core.deployment_settings' if 'RENDER_EXTERNAL_HOSTNAME' in os.environ else 'core.settings'
+    # Check for different deployment environments
+    if 'PIXL_SPACE' in os.environ or 'PIXL_HOSTNAME' in os.environ:
+        settings_module = 'core.pixl_settings'
+    elif 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
+        settings_module = 'core.deployment_settings'
+    else:
+        settings_module = 'core.settings'
+    
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
     try:
         from django.core.management import execute_from_command_line

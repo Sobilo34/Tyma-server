@@ -1,0 +1,81 @@
+[project]
+name = "tyma-server"
+version = "1.0.0"
+description = "TYMA Django Backend Server"
+
+[build]
+# Build command - installs dependencies and prepares the app
+build_command = "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
+
+# The directory containing your application
+root_directory = "."
+
+# Output directory (optional, defaults to build directory)
+output_directory = "."
+
+[runtime]
+# Python version
+python_version = "3.12"
+
+# Start command for your application
+start_command = "gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --workers 4"
+
+# Environment variables that need to be set
+[runtime.environment]
+# Django settings
+DJANGO_SETTINGS_MODULE = "core.settings"
+PYTHONPATH = "."
+PYTHONUNBUFFERED = "1"
+
+# Security
+DEBUG = "False"
+ALLOWED_HOSTS = "*"
+
+# Database (will be provided by Pixl Space)
+# DATABASE_URL = "provided-by-pixl-space"
+
+# Static files
+STATIC_URL = "/static/"
+STATIC_ROOT = "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "media"
+
+# CORS settings
+CORS_ALLOW_CREDENTIALS = "True"
+
+[runtime.health_check]
+# Health check endpoint
+path = "/api/"
+timeout = 30
+
+[deploy]
+# Auto-deploy on git push
+auto_deploy = true
+
+# Build timeout in seconds
+build_timeout = 600
+
+# Domains configuration
+[deploy.domains]
+# This will be configured in Pixl Space dashboard
+# primary = "your-app-name.pixl.space"
+
+# Static file serving
+[static]
+# Enable static file serving
+enabled = true
+directory = "staticfiles"
+url_prefix = "/static/"
+
+# Media file serving
+[media]
+enabled = true
+directory = "media"
+url_prefix = "/media/"
+
+# Database configuration
+[database]
+# Pixl Space will automatically provision a PostgreSQL database
+# Connection details will be provided via DATABASE_URL environment variable
+type = "postgresql"
+auto_migrate = true
